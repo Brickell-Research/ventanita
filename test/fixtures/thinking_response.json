@@ -1,0 +1,10 @@
+{
+  "id": "msg_3",
+  "model": "m",
+  "content": [
+    { "type": "thinking", "thinking": "hmm", "signature": "x" },
+    { "type": "text", "text": "Answer" }
+  ],
+  "stop_reason": "end_turn",
+  "usage": { "input_tokens": 1, "output_tokens": 1 }
+}

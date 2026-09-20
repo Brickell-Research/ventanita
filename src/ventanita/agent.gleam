@@ -1,15 +1,9 @@
-pub type Context {
-  Context(history: List(String))
-}
+import gleam/result
+import ventanita/agent/context.{new_context}
+import ventanita/agent/core.{execute_turn}
 
-pub fn new_context() -> Context {
-  Context(history: [])
-}
+pub fn execute() -> Result(String, String) {
+  use context <- result.try(new_context())
 
-pub fn execute(context: Context) -> String {
-  execute_turn(context)
-}
-
-pub fn execute_turn(_context: Context) -> String {
-  "done"
+  execute_turn(context, "say hello like a pirate")
 }

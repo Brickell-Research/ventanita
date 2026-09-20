@@ -1,0 +1,15 @@
+{
+  "id": "msg_2",
+  "model": "m",
+  "content": [
+    { "type": "text", "text": "Checking" },
+    {
+      "type": "tool_use",
+      "id": "toolu_1",
+      "name": "get_time",
+      "input": { "tz": "UTC", "n": [1, 2.5, true, null] }
+    }
+  ],
+  "stop_reason": "tool_use",
+  "usage": { "input_tokens": 1, "output_tokens": 2 }
+}
