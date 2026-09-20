@@ -4,7 +4,7 @@ import gleam/dynamic/decode.{type Decoder}
 import gleam/json
 import gleam/list
 import gleam/string
-import ventanita/vendors/anthropic/message.{type Block}
+import ventanita/anthropic/message.{type Block}
 
 pub type StopReason {
   EndTurn

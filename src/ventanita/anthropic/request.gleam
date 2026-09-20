@@ -3,8 +3,8 @@
 import gleam/json.{type Json}
 import gleam/list
 import gleam/option.{type Option, None, Some}
-import ventanita/vendors/anthropic/message.{type Message}
-import ventanita/vendors/anthropic/tool.{type Tool}
+import ventanita/anthropic/message.{type Message}
+import ventanita/anthropic/tool.{type Tool}
 
 pub type Request {
   Request(
@@ -17,13 +17,7 @@ pub type Request {
 }
 
 pub fn new(model: String, max_tokens: Int) -> Request {
-  Request(
-    model: model,
-    max_tokens: max_tokens,
-    system: None,
-    messages: [],
-    tools: [],
-  )
+  Request(model:, max_tokens:, system: None, messages: [], tools: [])
 }
 
 pub fn to_json(req: Request) -> Json {

@@ -1,9 +1,8 @@
 import gleam/json
 import gleam/option.{Some}
-import gleeunit/should
-import ventanita/vendors/anthropic/message
-import ventanita/vendors/anthropic/request
-import ventanita/vendors/anthropic/tool
+import ventanita/anthropic/message
+import ventanita/anthropic/request
+import ventanita/anthropic/tool
 
 pub fn to_json_test() {
   let req =
@@ -37,9 +36,7 @@ pub fn to_json_test() {
       ),
     ])
 
-  request.to_json(req)
-  |> json.to_string
-  |> should.equal(json.to_string(expected))
+  assert json.to_string(request.to_json(req)) == json.to_string(expected)
 }
 
 pub fn to_json_with_tool_test() {
@@ -69,7 +66,5 @@ pub fn to_json_with_tool_test() {
       ),
     ])
 
-  request.to_json(req)
-  |> json.to_string
-  |> should.equal(json.to_string(expected))
+  assert json.to_string(request.to_json(req)) == json.to_string(expected)
 }

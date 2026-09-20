@@ -90,7 +90,7 @@ fn json_decoder() -> Decoder(Json) {
       decode.list(json_decoder()) |> decode.map(json.preprocessed_array),
       decode.dict(decode.string, json_decoder())
         |> decode.map(fn(entries) { json.object(dict.to_list(entries)) }),
-      decode.optional(decode.string) |> decode.map(fn(_) { json.null() }),
+      decode.optional(decode.dynamic) |> decode.map(fn(_) { json.null() }),
     ])
   })
 }

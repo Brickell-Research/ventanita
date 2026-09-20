@@ -1,10 +1,8 @@
 import gleam/io
-import ventanita/agent.{execute}
+import ventanita/agent
 
 pub fn main() -> Nil {
-  let outcome = execute()
-
-  case outcome {
+  case agent.execute() {
     Ok(reply) -> io.println(reply)
     Error(reason) -> io.println_error("error: " <> reason)
   }

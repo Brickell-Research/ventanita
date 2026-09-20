@@ -9,9 +9,9 @@ import gleam/http/response.{type Response as HttpResponse}
 import gleam/httpc
 import gleam/json
 import gleam/result
-import ventanita/vendors/anthropic/error.{type Error}
-import ventanita/vendors/anthropic/request.{type Request}
-import ventanita/vendors/anthropic/response as api_response
+import ventanita/anthropic/error.{type Error}
+import ventanita/anthropic/request.{type Request}
+import ventanita/anthropic/response as api_response
 
 const api_version = "2023-06-01"
 
