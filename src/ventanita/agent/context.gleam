@@ -60,7 +60,7 @@ pub fn config(api_key: String, working_directory: String) -> Config {
       write_file.tool(),
     ],
     allowed_access: [tool.ReadOnly],
-    max_steps: 8,
+    max_steps: 50,
   )
 }
 
