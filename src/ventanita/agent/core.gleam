@@ -14,6 +14,7 @@ import ventanita/anthropic/message.{type Block, type Message}
 import ventanita/anthropic/models
 import ventanita/anthropic/request.{type Request}
 import ventanita/anthropic/response
+import ventanita/ui
 
 pub type Turn {
   Turn(reply: String, context: Context)
@@ -53,16 +54,19 @@ fn step(
 }
 
 /// Answers every tool call in `content`. Failures become error results the
-/// model can see, rather than crashing the turn.
+/// model can see, rather than crashing the turn. Each call is shown
+/// to the person watching the run.
 pub fn run_tools(context: Context, content: List(Block)) -> List(Block) {
   let tools = available_tools(context)
   list.filter_map(content, fn(block) {
     case block {
-      message.ToolUse(id, name, input) ->
+      message.ToolUse(id, name, input) -> {
+        ui.tool_call(name)
         Ok(case tool.call(tools, name, input) {
           Ok(output) -> message.ToolResult(id, output, False)
           Error(reason) -> message.ToolResult(id, reason, True)
         })
+      }
       _ -> Error(Nil)
     }
   })
