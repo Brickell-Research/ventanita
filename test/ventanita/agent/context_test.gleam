@@ -1,7 +1,9 @@
 import envoy
+import gleam/list
 import gleam/string
 import simplifile
 import ventanita/agent/context
+import ventanita/agent/tool
 import ventanita/anthropic/message
 import ventanita/anthropic/models
 
@@ -37,4 +39,15 @@ pub fn append_preserves_order_test() {
   let appended = context.append(ctx, [message.user("second")])
 
   assert appended.history == [message.user("first"), message.user("second")]
+}
+
+pub fn default_config_does_not_offer_mutating_tools_test() {
+  let config = context.config("sk-test", "/work")
+
+  let names =
+    tool.available(config.tools, config.allowed_access)
+    |> list.map(fn(t) { t.name })
+
+  assert !list.contains(names, "write_file")
+  assert list.contains(names, "read_file")
 }
