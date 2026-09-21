@@ -61,13 +61,17 @@ pub fn run_tools_answers_each_call_test() {
   let input = json.object([])
 
   let results =
-    core.run_tools(ctx, [
-      message.Text("thinking"),
-      message.ToolUse("a", "read", input),
-      // Registered but not permitted: refused like an unknown tool.
-      message.ToolUse("b", "write", input),
-      message.ToolUse("c", "nope", input),
-    ])
+    core.run_tools(
+      ctx,
+      [
+        message.Text("thinking"),
+        message.ToolUse("a", "read", input),
+        // Registered but not permitted: refused like an unknown tool.
+        message.ToolUse("b", "write", input),
+        message.ToolUse("c", "nope", input),
+      ],
+      1,
+    )
 
   assert results
     == [

@@ -3,6 +3,7 @@
 //// then folded back into the context.
 
 import gleam/bool
+import gleam/json
 import gleam/list
 import gleam/option.{Some}
 import gleam/result
@@ -32,6 +33,7 @@ fn step(
   steps_left: Int,
 ) -> Result(Turn, Error) {
   use <- bool.guard(steps_left <= 0, Error(error.TooManySteps))
+  let step_number = context.config.max_steps - steps_left + 1
   use reply <- result.try(client.send(
     context.config.anthropic_api_key,
     make_request(context, pending),
@@ -42,7 +44,10 @@ fn step(
   case reply.stop_reason {
     response.ToolUseRequested -> {
       let results =
-        message.Message(message.User, run_tools(context, reply.content))
+        message.Message(
+          message.User,
+          run_tools(context, reply.content, step_number),
+        )
       step(context, list.append(pending, [results]), steps_left - 1)
     }
     _ ->
@@ -56,12 +61,16 @@ fn step(
 /// Answers every tool call in `content`. Failures become error results the
 /// model can see, rather than crashing the turn. Each call is shown
 /// to the person watching the run.
-pub fn run_tools(context: Context, content: List(Block)) -> List(Block) {
+pub fn run_tools(
+  context: Context,
+  content: List(Block),
+  step: Int,
+) -> List(Block) {
   let tools = available_tools(context)
   list.filter_map(content, fn(block) {
     case block {
       message.ToolUse(id, name, input) -> {
-        ui.tool_call(name)
+        ui.tool_call(step, name, json.to_string(input))
         Ok(case tool.call(tools, name, input) {
           Ok(output) -> message.ToolResult(id, output, False)
           Error(reason) -> message.ToolResult(id, reason, True)

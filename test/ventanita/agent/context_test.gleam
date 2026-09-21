@@ -17,7 +17,7 @@ pub fn new_context_reads_api_key_test() {
   envoy.unset("ANTHROPIC_API_KEY")
 
   assert ctx.config.anthropic_api_key == "sk-test"
-  assert ctx.config.model == models.Haiku4pt5
+  assert ctx.config.model == models.Sonnet5
   assert ctx.history == []
   // The real working directory is part of the system prompt.
   let assert Ok(cwd) = simplifile.current_directory()

@@ -50,7 +50,7 @@ pub fn config(api_key: String, working_directory: String) -> Config {
   Config(
     max_tokens: 1024,
     anthropic_api_key: api_key,
-    model: models.Haiku4pt5,
+    model: models.Sonnet5,
     system_prompt: prompt.system(working_directory),
     tools: [current_time.tool(), list_files.tool(), read_file.tool()],
     allowed_access: [tool.ReadOnly],

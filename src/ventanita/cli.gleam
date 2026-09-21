@@ -6,13 +6,17 @@ import argv
 import gleam/io
 import gleam/string
 import ventanita/agent
+import ventanita/ui
 
 pub fn main() -> Nil {
   case argv.load().arguments {
     [] -> fail("usage: ventanita <prompt>")
     args ->
       case agent.execute(string.join(args, " ")) {
-        Ok(reply) -> io.println(reply)
+        Ok(reply) -> {
+          ui.divider()
+          io.println(reply)
+        }
         Error(reason) -> fail("error: " <> reason)
       }
   }

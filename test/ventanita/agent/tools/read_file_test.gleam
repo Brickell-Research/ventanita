@@ -25,8 +25,10 @@ pub fn missing_file_is_an_error_test() {
 }
 
 pub fn truncates_large_files_test() {
-  let assert Ok(contents) =
-    call("build/packages/gleam_stdlib/src/gleam/list.gleam")
+  let path = "build/read_file_test.tmp"
+  let assert Ok(Nil) = simplifile.write(path, string.repeat("x", 60_000))
+  let assert Ok(contents) = call(path)
+  let assert Ok(Nil) = simplifile.delete(path)
 
   assert string.ends_with(contents, "\n[truncated]")
 }
