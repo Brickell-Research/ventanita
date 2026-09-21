@@ -5,11 +5,21 @@
 import gleam/result
 import ventanita/agent/context
 import ventanita/agent/core.{type Turn}
+import ventanita/agent/tool.{type Access}
 import ventanita/anthropic/error
 
-/// Runs one turn. The `Turn` carries the reply plus usage for diagnostics.
-pub fn execute(prompt: String) -> Result(Turn, String) {
+/// Runs one turn with tools limited to `allowed_access`; every trigger says
+/// what it permits. The `Turn` carries the reply plus usage for diagnostics.
+pub fn execute(
+  prompt: String,
+  allowed_access: List(Access),
+) -> Result(Turn, String) {
   use ctx <- result.try(context.new_context())
+  let ctx =
+    context.Context(
+      ..ctx,
+      config: context.Config(..ctx.config, allowed_access:),
+    )
 
   core.execute_turn(ctx, prompt)
   |> result.map_error(error.to_string)

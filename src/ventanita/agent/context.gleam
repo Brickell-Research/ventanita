@@ -9,6 +9,7 @@ import ventanita/agent/prompt
 import ventanita/agent/tool.{type Access, type Tool}
 import ventanita/agent/tools/current_time
 import ventanita/agent/tools/list_files
+import ventanita/agent/tools/make_directory
 import ventanita/agent/tools/read_file
 import ventanita/agent/tools/write_file
 import ventanita/anthropic/message.{type Message}
@@ -58,6 +59,7 @@ pub fn config(api_key: String, working_directory: String) -> Config {
       list_files.tool(),
       read_file.tool(),
       write_file.tool(),
+      make_directory.tool(),
     ],
     allowed_access: [tool.ReadOnly],
     max_steps: 50,
