@@ -4,9 +4,11 @@
 import envoy
 import gleam/list
 import gleam/result
+import simplifile
 import ventanita/agent/prompt
 import ventanita/agent/tool.{type Access, type Tool}
 import ventanita/agent/tools/current_time
+import ventanita/agent/tools/list_files
 import ventanita/anthropic/message.{type Message}
 import ventanita/anthropic/models.{type Model}
 
@@ -34,16 +36,22 @@ pub fn new_context() -> Result(Context, String) {
     envoy.get("ANTHROPIC_API_KEY")
     |> result.replace_error("ANTHROPIC_API_KEY is not set"),
   )
-  Ok(Context(history: [], config: config(api_key)))
+  use cwd <- result.try(
+    simplifile.current_directory()
+    |> result.map_error(fn(e) {
+      "could not read working directory: " <> simplifile.describe_error(e)
+    }),
+  )
+  Ok(Context(history: [], config: config(api_key, cwd)))
 }
 
-pub fn config(api_key: String) -> Config {
+pub fn config(api_key: String, working_directory: String) -> Config {
   Config(
     max_tokens: 1024,
     anthropic_api_key: api_key,
     model: models.Haiku4pt5,
-    system_prompt: prompt.base,
-    tools: [current_time.tool()],
+    system_prompt: prompt.system(working_directory),
+    tools: [current_time.tool(), list_files.tool()],
     allowed_access: [tool.ReadOnly],
     max_steps: 8,
   )

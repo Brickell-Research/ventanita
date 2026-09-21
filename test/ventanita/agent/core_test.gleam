@@ -12,7 +12,7 @@ fn test_context(tools: List(tool.Tool), allowed: List(tool.Access)) {
   context.Context(
     history: [message.user("first")],
     config: context.Config(
-      ..context.config("sk-test"),
+      ..context.config("sk-test", "/work"),
       max_tokens: 256,
       model: models.Sonnet5,
       tools:,
@@ -39,7 +39,7 @@ pub fn make_request_carries_history_test() {
 pub fn make_request_sets_system_prompt_test() {
   let req = core.make_request(test_context([], []), [])
 
-  assert req.system == Some(prompt.base)
+  assert req.system == Some(prompt.system("/work"))
 }
 
 pub fn make_request_offers_only_permitted_tools_test() {
