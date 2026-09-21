@@ -14,15 +14,16 @@ import ventanita/anthropic/error.{type Error}
 import ventanita/anthropic/message.{type Block, type Message}
 import ventanita/anthropic/models
 import ventanita/anthropic/request.{type Request}
-import ventanita/anthropic/response
+import ventanita/anthropic/response.{type Usage, Usage}
 import ventanita/ui
 
 pub type Turn {
-  Turn(reply: String, context: Context)
+  /// `usage` totals every model call in the turn; `steps` counts them.
+  Turn(reply: String, context: Context, usage: Usage, steps: Int)
 }
 
 pub fn execute_turn(context: Context, prompt: String) -> Result(Turn, Error) {
-  step(context, [message.user(prompt)], context.config.max_steps)
+  step(context, [message.user(prompt)], context.config.max_steps, Usage(0, 0))
 }
 
 /// `pending` is this turn's exchange so far; it only joins the history once
@@ -31,6 +32,7 @@ fn step(
   context: Context,
   pending: List(Message),
   steps_left: Int,
+  used: Usage,
 ) -> Result(Turn, Error) {
   use <- bool.guard(steps_left <= 0, Error(error.TooManySteps))
   let step_number = context.config.max_steps - steps_left + 1
@@ -40,6 +42,11 @@ fn step(
   ))
   let pending =
     list.append(pending, [message.Message(message.Assistant, reply.content)])
+  let used =
+    Usage(
+      used.input_tokens + reply.usage.input_tokens,
+      used.output_tokens + reply.usage.output_tokens,
+    )
 
   case reply.stop_reason {
     response.ToolUseRequested -> {
@@ -48,12 +55,14 @@ fn step(
           message.User,
           run_tools(context, reply.content, step_number),
         )
-      step(context, list.append(pending, [results]), steps_left - 1)
+      step(context, list.append(pending, [results]), steps_left - 1, used)
     }
     _ ->
       Ok(Turn(
         reply: response.text(reply),
         context: context.append(context, pending),
+        usage: used,
+        steps: step_number,
       ))
   }
 }

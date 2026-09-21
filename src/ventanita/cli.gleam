@@ -5,20 +5,29 @@
 import argv
 import gleam/io
 import gleam/string
+import gleam/time/duration
+import gleam/time/timestamp
 import ventanita/agent
 import ventanita/ui
 
 pub fn main() -> Nil {
   case argv.load().arguments {
     [] -> fail("usage: ventanita <prompt>")
-    args ->
-      case agent.execute(string.join(args, " ")) {
-        Ok(reply) -> {
-          ui.divider()
-          io.println(reply)
-        }
-        Error(reason) -> fail("error: " <> reason)
-      }
+    args -> run(string.join(args, " "))
+  }
+}
+
+fn run(prompt: String) -> Nil {
+  let start = timestamp.system_time()
+  case agent.execute(prompt) {
+    Ok(turn) -> {
+      let elapsed = timestamp.difference(start, timestamp.system_time())
+      ui.section("diagnostics")
+      ui.usage(turn.usage, turn.steps, duration.to_seconds(elapsed))
+      ui.section("output")
+      io.println(turn.reply)
+    }
+    Error(reason) -> fail("error: " <> reason)
   }
 }
 
