@@ -9,6 +9,7 @@ import ventanita/agent/prompt
 import ventanita/agent/tool.{type Access, type Tool}
 import ventanita/agent/tools/current_time
 import ventanita/agent/tools/list_files
+import ventanita/agent/tools/read_file
 import ventanita/anthropic/message.{type Message}
 import ventanita/anthropic/models.{type Model}
 
@@ -51,7 +52,7 @@ pub fn config(api_key: String, working_directory: String) -> Config {
     anthropic_api_key: api_key,
     model: models.Haiku4pt5,
     system_prompt: prompt.system(working_directory),
-    tools: [current_time.tool(), list_files.tool()],
+    tools: [current_time.tool(), list_files.tool(), read_file.tool()],
     allowed_access: [tool.ReadOnly],
     max_steps: 8,
   )
