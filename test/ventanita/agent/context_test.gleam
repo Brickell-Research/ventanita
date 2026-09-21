@@ -23,7 +23,7 @@ pub fn append_preserves_order_test() {
   let ctx =
     context.Context(
       history: [message.user("first")],
-      config: context.Config(1, "sk-test", models.Haiku4pt5),
+      config: context.config("sk-test"),
     )
 
   let appended = context.append(ctx, [message.user("second")])

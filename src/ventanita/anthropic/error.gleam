@@ -12,6 +12,8 @@ pub type Error {
   /// The API answered with a non-2xx status.
   Api(status: Int, kind: String, message: String)
   Decode(json.DecodeError)
+  /// The model kept requesting tools past the step limit.
+  TooManySteps
 }
 
 /// Builds an `Api` error from a non-2xx response body.
@@ -36,6 +38,7 @@ pub fn to_string(error: Error) -> String {
       <> "): "
       <> message
     Http(error) -> "HTTP error: " <> string.inspect(error)
+    TooManySteps -> "model exceeded the tool-use step limit"
     Decode(error) -> "could not decode response: " <> string.inspect(error)
   }
 }

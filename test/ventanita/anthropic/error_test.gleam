@@ -25,3 +25,8 @@ pub fn decode_error_to_string_test() {
   assert string.starts_with(message, "could not decode response: ")
   assert string.contains(message, "UnexpectedByte")
 }
+
+pub fn too_many_steps_to_string_test() {
+  assert error.to_string(error.TooManySteps)
+    == "model exceeded the tool-use step limit"
+}

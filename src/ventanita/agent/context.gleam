@@ -4,11 +4,25 @@
 import envoy
 import gleam/list
 import gleam/result
+import ventanita/agent/prompt
+import ventanita/agent/tool.{type Access, type Tool}
+import ventanita/agent/tools/current_time
 import ventanita/anthropic/message.{type Message}
 import ventanita/anthropic/models.{type Model}
 
 pub type Config {
-  Config(max_tokens: Int, anthropic_api_key: String, model: Model)
+  Config(
+    max_tokens: Int,
+    anthropic_api_key: String,
+    model: Model,
+    system_prompt: String,
+    /// Every tool that exists for this agent...
+    tools: List(Tool),
+    /// ...and the kinds of access it is actually allowed to use.
+    allowed_access: List(Access),
+    /// Cap on model calls per turn, so a tool loop cannot run away.
+    max_steps: Int,
+  )
 }
 
 pub type Context {
@@ -20,14 +34,19 @@ pub fn new_context() -> Result(Context, String) {
     envoy.get("ANTHROPIC_API_KEY")
     |> result.replace_error("ANTHROPIC_API_KEY is not set"),
   )
-  let config =
-    Config(
-      max_tokens: 1024,
-      anthropic_api_key: api_key,
-      model: models.Haiku4pt5,
-    )
+  Ok(Context(history: [], config: config(api_key)))
+}
 
-  Ok(Context(history: [], config:))
+pub fn config(api_key: String) -> Config {
+  Config(
+    max_tokens: 1024,
+    anthropic_api_key: api_key,
+    model: models.Haiku4pt5,
+    system_prompt: prompt.base,
+    tools: [current_time.tool()],
+    allowed_access: [tool.ReadOnly],
+    max_steps: 8,
+  )
 }
 
 /// Records a completed exchange so the next turn can see it.
